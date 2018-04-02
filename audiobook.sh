@@ -13,7 +13,7 @@ if [ -z "${title}" ]; then
 	title="${suggested_title}"
 fi
 if [ -z "${genre}" ]; then
-	title="Audiobook"
+	genre="Audiobook"
 fi
 
 output="${2:-}"
@@ -37,10 +37,10 @@ input_thresh=$(echo "$measures" | jq -r .input_thresh)
 measured="measured_i=${input_i}:measured_tp=${input_tp}:measured_lra=${input_lra}:measured_thresh=${input_thresh}"
 
 set -o xtrace
-ffmpeg -i "$1" -vframes 1 \
+ffmpeg -i "$1" \
 	-map 0:a -filter:a loudnorm=I=-16:lra=1:tp=-1:${measured} \
 	-c:a libmp3lame -ac 1 -b:a 96k \
-	-map 0:v -c:v png -filter:v "${crop}" \
+	-map 0:v -c:v png -filter:v "trim=start_frame=0:end_frame=1,${crop}" \
 	-id3v2_version 3 -metadata:s:v title="Album cover" -metadata:s:v comment="Cover (Front)" \
 	-metadata "title=${title}" \
 	-metadata "artist=${artist}" \
