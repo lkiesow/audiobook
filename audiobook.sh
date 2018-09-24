@@ -3,6 +3,11 @@
 set -o nounset
 set -o errexit
 
+if [ "$#" -ne 2 ]; then
+	echo "${0} infile outfile.mp3"
+	exit 1
+fi
+
 suggested_title="$(basename "$1" | sed 's/\.[^.]*$//')"
 
 read -r -p 'Artist: ' artist
